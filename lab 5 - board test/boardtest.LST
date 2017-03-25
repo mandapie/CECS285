@@ -1,0 +1,30 @@
+A51 MACRO ASSEMBLER  BOARDTEST                                                            02/10/2016 14:43:01 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN boardtest.OBJ
+ASSEMBLER INVOKED BY: C:\Program Files (x86)\Keil\C51\BIN\A51.EXE boardtest.a51 SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000 759000            1     mov p1, #0x00 ;configure Port1 as output
+0003 858090            2     L1: mov p1, p0 ;read Port0 value and write to Poart1
+0006 80FB              3     sjmp L1 ;repeat the previous instruction forever
+                       4     end
+A51 MACRO ASSEMBLER  BOARDTEST                                                            02/10/2016 14:43:01 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+L1 . . . . . . . .  C ADDR   0003H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

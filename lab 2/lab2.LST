@@ -1,0 +1,50 @@
+A51 MACRO ASSEMBLER  LAB2                                                                 01/26/2016 16:44:51 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN lab2.OBJ
+ASSEMBLER INVOKED BY: C:\Program Files (x86)\Keil\C51\BIN\A51.EXE lab2.a51 SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Amanda Pan
+                       2     ;ID: 014551171
+                       3     ;Activity 2
+                       4     
+0000 7400              5     mov a, #0 ; a <-# 0
+0002 2401              6     add a, #1 ; a + #1
+0004 2404              7     add a, #4 ; a + #4
+0006 2405              8     add a, #5 ; a + #5
+0008 2405              9     add a, #5 ; a + #5
+000A 2401             10     add a, #1 ; a + #1
+000C 2401             11     add a, #1 ; a + #1
+000E 2407             12     add a, #7 ; a + #7
+0010 2401             13     add a, #1 ; a + #1
+0012 FA               14     mov r2, a ;r2 <- a
+                      15     end
+                             
+                             ;Activity 1
+                             ;mov a, #0x99 ;a <- 99H
+                             ;mov r0, a  ;r0 <- a
+                             ;mov r1, a  ;r1 <- a
+                             ;mov r2, a  ;r2 <- a
+                             ;mov r3, a  ;r3 <- a
+                             ;mov r4, a  ;r4<- a
+                             ;mov r5, a  ;r5 <- a
+                             ;mov r6, a  ;r6 <- a
+                             ;mov r7, a  ;r7 <- a
+                             ;end
+A51 MACRO ASSEMBLER  LAB2                                                                 01/26/2016 16:44:51 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,61 @@
+A51 MACRO ASSEMBLER  LAB3                                                                 01/28/2016 18:10:42 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN lab3.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE lab3.a51 SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Amanda Pan
+                       2     ;Lab 3: Ram and complex operation
+                       3     ;Activity 2
+                       4     
+  0030                 5     w EQU 0x30 ;char w with ROM location 0x30
+  0031                 6     x EQU 0x31 ;char x with ROM location 0x31
+  0032                 7     y EQU 0x32 ;char y with ROM location 0x32
+  0033                 8     z EQU 0x33 ;char z with ROM location 0x33
+                       9     
+0000 753001           10     mov w, #0x01 ;w = 0x01
+0003 753102           11     mov x, #0x02 ;x = 0x02
+0006 753203           12     mov y, #0x03 ;y = 0x03
+0009 753304           13     mov z, #0x04 ;z = 0x04
+000C E532             14     mov A, y ;A = y
+000E 2533             15     add A, z ;A = y+z
+0010 9530             16     subb A, w ;A = y+z-w
+0012 9531             17     subb A, x ;A = y+z-w-x
+                      18     end
+                             
+                             
+                             
+                             
+                             
+                             ;Activity 1
+                             
+                             mov R0, #0x1F ;R0 = #0x1F
+*** WARNING #A73 IN 26 (lab3.a51, LINE 26): TEXT FOUND BEYOND END STATEMENT - IGNORED
+                             mov R1, #0x2E ;R1 = #0x2E
+                             mov R2, #0x3D ;R2 = #0x3D
+                             mov A, R0 ;A = R0
+                             add A, R1 ;A = R0 + R1
+                             subb A, R2 ;A = R0 + R1 - R2
+                             mov R4, A ;R4 = A
+                             end
+A51 MACRO ASSEMBLER  LAB3                                                                 01/28/2016 18:10:42 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+W. . . . . . . . .  N NUMB   0030H   A   
+X. . . . . . . . .  N NUMB   0031H   A   
+Y. . . . . . . . .  N NUMB   0032H   A   
+Z. . . . . . . . .  N NUMB   0033H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  1 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,296 @@
+A51 MACRO ASSEMBLER  LAB_11                                                               05/03/2016 20:56:29 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN lab 11.OBJ
+ASSEMBLER INVOKED BY: C:\Program Files (x86)\Keil\C51\BIN\A51.EXE lab 11.a51 SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;--- constant definitions ---;
+  0000                 2     null equ 0x00
+  000D                 3     cr equ 0x0d
+  000A                 4     lf equ 0x0a
+  0009                 5     tab equ 0x09
+  0022                 6     keyBytesRAMaddress equ 0x22 ;symbolic constant for base address of encryption key in RAM
+  0030                 7     txtRAMaddress equ 0x30 ;symbolic constant for base address of encryption key in RAM
+                       8     
+                       9     ;--- variable definitions ---;
+  00E0                10     keyvalIndex equ 0xe0 ;variable to index the keyval constant array
+  0020                11     keylength equ 0x20 ;variable to track length o key
+  0021                12     txtlength equ 0x21 ;variable to track length o key
+  00E0                13     charIndex equ 0xe0 ;alias for accumulator
+  007F                14     choice equ 0x7f ;variable to store selected operation
+                      15     
+0000 802E             16     jmp main ;jump past interrupt vector table
+0030                  17     org 0x0030 ;put main program at rom location 0x0030
+0030                  18     main:
+                      19             ;---------------- Initialization/configuration ----------------;
+0030 758920           20                     mov tmod, #0x20 ;config timer 1 mode 2
+0033 759850           21                     mov scon, #0x50 ;config serial 8-data, 1 start, 1 stop, no parity
+0036 758DFD           22                     mov th1, #0xFD ;9600 baud
+0039 D28E             23                     setb tr1 ;start timer 1 to enable serial communication
+003B 7822             24                     mov r0, #keyBytesRAMaddress ;initialize RAM pointer
+003D 900200           25                     mov dptr, #keyVal ;initialize ROM pointer
+0040 75E000           26                     mov keyvalIndex, #0x00 ;initialize keyvalIndex
+0043 115A             27                     call LoadKeyFromROM
+0045 900202           28                     mov dptr, #PromptPT ;set pointer to the read the string
+0048 11CA             29                     call WriteString
+004A 116E             30                     call BufferText
+004C 117B             31                     call RotationEncrypt
+004E 11A7             32                     call WriteBufferedText
+0050 11B4             33                     call WaitForEnterKey
+0052 116E             34                     call BufferText
+0054 1191             35                     call RotationDecrypt
+0056 11A7             36                     call WriteBufferedText
+0058 01DE             37                     jmp terminate
+                      38                     
+                      39     ;--- load key from ROM ---;
+                      40     ;receives ROM location of key array in dptr before it is called
+                      41     ;loads bytes from a constant array of key values into RAM
+                      42     ;returns nothing
+005A                  43     LoadKeyFromROM:
+005A 7821             44             mov r0, #keyBytesRAMaddress-1 ;initialize RAM pointer
+005C 75E000           45             mov keyvalIndex, #0x00 ;initialize accumulator
+005F                  46             GetNextKeyByteFromROM:
+005F 08               47                     inc r0 ;increment RAM pointer
+0060 C0E0             48                     push keyvalIndex ;preserve keyvalIndex variable
+0062 93               49                     movc a, @a+dptr ;load byte of key into accumulator
+0063                  50                     notNull:
+0063 F6               51                             mov @r0, a ;put byte of key into RAM
+0064 D0E0             52                             pop keyvalIndex ;restore keyvalIndex variable
+0066 05E0             53                             inc keyvalIndex ;increment keyvalIndex
+0068 B600F4           54                     cjne @r0, #0x00, GetNextKeyByteFromROM ;check for null terminating characte
+                             r
+006B                  55             LoadDone:
+006B 7600             56                     mov @r0,#0x00 ;append null char to string
+006D 22               57                     ret
+A51 MACRO ASSEMBLER  LAB_11                                                               05/03/2016 20:56:29 PAGE     2
+
+                      58     
+                      59     ;------- Buffer Text -------
+                      60     ;receives no parameters
+                      61     ;reads a series of TXT bytes from serial Rx
+                      62     ;writes the bytes to RAM at location indicated by keyBytesRAMaddress
+                      63     ;returns length of key in the keyLength variable
+006E                  64     BufferText:
+006E 7930             65             mov r1, #txtRAMaddress ;initialize pointer
+0070                  66             WaitForTXTChar:
+0070 3098FD           67                     jnb ri, $ ;wait to receive char
+0073 11BD             68                     call getChar ;char received, get it
+0075 F7               69                     mov @r1, a ;store character into RAM
+0076 09               70                     inc r1 ;increment pointer
+0077 B40DF6           71                     cjne a, #0x0D, WaitForTXTChar ;DEBUG: check for Enter char for debug
+007A 22               72                             ret
+                      73     
+                      74     ;------ Rotation Encrypt ------
+                      75     ;receives no parameters
+                      76     ;encrypts the plain text contained in RAM
+                      77     ;returns nothing
+007B                  78     RotationEncrypt:
+007B 7822             79             mov r0, #keyBytesRAMaddress ;re-initialize key pointer
+007D 7930             80             mov r1, #txtRAMaddress ;re-initialize txt pointer
+007F                  81     RotationEncryptNextChar:
+007F E6               82             mov a, @r0 ;initialize rotate loop count
+0080 FE               83             mov r6, a ;must be passed to a before r6
+0081 E7               84             mov a, @r1 ;get char from plain text
+                      85             
+0082                  86             rotateEncrypt:
+0082 03               87                     rr a
+0083 DEFD             88                     djnz r6, rotateEncrypt
+                      89             
+0085 F7               90             mov @r1, a ;write encrypted character bac to RAM
+                      91             
+0086 08               92             inc r0 ;point to next keyByte
+0087 B60002           93             cjne @r0, #0x00, dontResetRotationEncryptionKeyPtr
+008A 7822             94                     mov r0, #keyBytesRAMaddress ;re-initialize key pointer
+008C                  95             dontResetRotationEncryptionKeyPtr:
+008C 09               96             inc r1 ;point to next plain text char
+008D B700EF           97                     cjne @r1, #0x00, RotationEncryptNextChar
+0090 22               98                     ret ;end of string reached
+                      99     
+                     100     ;------ Rotation Decrypt ------
+                     101     ;receives no parameters
+                     102     ;encrypts the plain text contained in RAM
+                     103     ;returns nothing
+0091                 104     RotationDecrypt:
+0091 7822            105             mov r0, #keyBytesRAMaddress ;re-initialize key pointer
+0093 7930            106             mov r1, #txtRAMaddress ;re-initialize txt pointer
+0095                 107     RotationDecryptNextChar:
+0095 E6              108             mov a, @r0 ;initialize rotate loop count
+0096 FE              109             mov r6, a ;must be passed to a before r6
+0097 E7              110             mov a, @r1 ;get char from cipher text
+                     111             
+0098                 112             rotateDecrypt:
+0098 23              113                     rl a
+0099 DEFD            114                     djnz r6, rotateDecrypt
+                     115             
+009B F7              116             mov @r1, a ;write decrypted character back to RAM
+                     117             
+009C 08              118             inc r0 ;point to next keyByte
+009D B60002          119             cjne @r0, #0x00, dontResetRotationDecryptionKeyPtr
+00A0 7822            120                     mov r0, #keyBytesRAMaddress ;re-initialize key pointer
+00A2                 121             dontResetRotationDecryptionKeyPtr:
+00A2 09              122             inc r1 ;point to next cipher text char
+00A3 B700EF          123                     cjne @r1, #0x00, RotationDecryptNextChar
+A51 MACRO ASSEMBLER  LAB_11                                                               05/03/2016 20:56:29 PAGE     3
+
+00A6 22              124                     ret ;end of string reached
+                     125                     
+                     126     ;------ WriteBufferedText -----
+                     127     ;receives address of buffered text in r1
+                     128     ;sends buffered text serially using writechar
+                     129     ;returns nothing
+00A7                 130     WriteBufferedText:
+00A7 7930            131             mov r1, #txtRAMaddress ;re-initialize txt pointer
+00A9                 132             NextBufChar:
+00A9 E7              133                     mov a, @r1
+00AA 11C2            134                     call writeChar
+00AC 09              135                     inc r1
+00AD B700F9          136                     cjne @r1, #null, NextBufChar
+00B0 E7              137                             mov a, @r1
+00B1 11C2            138                             call writeChar
+00B3 22              139                             ret
+                     140                             
+                     141     ;----- Wait For Enter Key -----
+                     142     ;receives no parameters
+                     143     ;loops until keyboard Enter key press is detected
+                     144     ;returns nothing
+00B4                 145     WaitForEnterKey:
+00B4 3098FD          146             jnb ri, $
+00B7 11BD            147                     call getChar
+00B9 B40DF8          148                     cjne a, #0x0d, WaitForEnterKey
+00BC 22              149                     ret
+                     150                     
+                     151     ;----------- getChar ----------;
+                     152     ;subroutine receives nothing before it is called
+                     153     ;writes the character to the serial console
+                     154     ;returns a byte in the accumulator
+00BD                 155     getChar:
+00BD E599            156                     mov a, sbuf ;get serial data (char)
+00BF C298            157                     clr ri ;acknowledge data received
+00C1 22              158                     ret ;return from subroutine call
+                     159                     
+                     160     ;----------- writeChar ----------;
+                     161     ;receives byte or character
+                     162     ;reads a character that has been received serially
+                     163     ;returns the c
+00C2                 164     writeChar:
+00C2 F599            165                     mov sbuf, a ;send data (char) serially
+00C4 3099FD          166                     jnb ti, $ ;wait until data is sent
+00C7 C299            167                     clr ti ;acknowledge data has been sent
+00C9 22              168                     ret ;return from subroutine call
+                     169                     
+                     170     ;----- WriteString -----
+                     171     ;receives address of string in dptr
+                     172     ;sends string serially using writeChar
+                     173     ;returns nothing
+00CA                 174     WriteString:
+00CA 75E000          175             mov charIndex, #0x00
+00CD                 176             NextChar:
+00CD C0E0            177                     push charIndex
+00CF 93              178                     movc a, @a+dptr
+00D0 B40003          179                     cjne a, #null, notNullChar
+00D3 D0E0            180                             pop charIndex
+00D5 22              181                             ret
+00D6                 182             notNullChar:
+00D6 11C2            183                     call writeChar
+00D8 D0E0            184                     pop charIndex
+00DA 05E0            185                     inc charIndex
+00DC 80EF            186                     jmp NextChar
+                     187                     
+00DE                 188     terminate:
+00DE 7400            189                     mov a, #0x00 ;load null character into accumulator
+A51 MACRO ASSEMBLER  LAB_11                                                               05/03/2016 20:56:29 PAGE     4
+
+00E0 11C2            190                     call writechar ;append the null character to text output
+00E2 80FE            191                     sjmp $ ;halt
+                     192                     
+0200                 193     org 0x200
+0200 3400            194     keyVal: db 0x34, 0x00
+0202 42656769        195     PromptPT: db "Begin the capture and send the plain.txt file", cr, lf
+0206 6E207468                
+020A 65206361                
+020E 70747572                
+0212 6520616E                
+0216 64207365                
+021A 6E642074                
+021E 68652070                
+0222 6C61696E                
+0226 2E747874                
+022A 2066696C                
+022E 650D0A                  
+0231 53746F70        196                               db "Stop the capture once the cipher text is displayed.", cr, lf,
+                              null
+0235 20746865                
+0239 20636170                
+023D 74757265                
+0241 206F6E63                
+0245 65207468                
+0249 65206369                
+024D 70686572                
+0251 20746578                
+0255 74206973                
+0259 20646973                
+025D 706C6179                
+0261 65642E0D                
+0265 0A00                    
+                     197     END
+A51 MACRO ASSEMBLER  LAB_11                                                               05/03/2016 20:56:29 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E                            T Y P E  V A L U E   ATTRIBUTES
+
+BUFFERTEXT. . . . . . . . . . . .  C ADDR   006EH   A   
+CHARINDEX . . . . . . . . . . . .  N NUMB   00E0H   A   
+CHOICE. . . . . . . . . . . . . .  N NUMB   007FH   A   
+CR. . . . . . . . . . . . . . . .  N NUMB   000DH   A   
+DONTRESETROTATIONDECRYPTIONKEYPTR  C ADDR   00A2H   A   
+DONTRESETROTATIONENCRYPTIONKEYPTR  C ADDR   008CH   A   
+GETCHAR . . . . . . . . . . . . .  C ADDR   00BDH   A   
+GETNEXTKEYBYTEFROMROM . . . . . .  C ADDR   005FH   A   
+KEYBYTESRAMADDRESS. . . . . . . .  N NUMB   0022H   A   
+KEYLENGTH . . . . . . . . . . . .  N NUMB   0020H   A   
+KEYVAL. . . . . . . . . . . . . .  C ADDR   0200H   A   
+KEYVALINDEX . . . . . . . . . . .  N NUMB   00E0H   A   
+LF. . . . . . . . . . . . . . . .  N NUMB   000AH   A   
+LOADDONE. . . . . . . . . . . . .  C ADDR   006BH   A   
+LOADKEYFROMROM. . . . . . . . . .  C ADDR   005AH   A   
+MAIN. . . . . . . . . . . . . . .  C ADDR   0030H   A   
+NEXTBUFCHAR . . . . . . . . . . .  C ADDR   00A9H   A   
+NEXTCHAR. . . . . . . . . . . . .  C ADDR   00CDH   A   
+NOTNULL . . . . . . . . . . . . .  C ADDR   0063H   A   
+NOTNULLCHAR . . . . . . . . . . .  C ADDR   00D6H   A   
+NULL. . . . . . . . . . . . . . .  N NUMB   0000H   A   
+PROMPTPT. . . . . . . . . . . . .  C ADDR   0202H   A   
+RI. . . . . . . . . . . . . . . .  B ADDR   0098H.0 A   
+ROTATEDECRYPT . . . . . . . . . .  C ADDR   0098H   A   
+ROTATEENCRYPT . . . . . . . . . .  C ADDR   0082H   A   
+ROTATIONDECRYPT . . . . . . . . .  C ADDR   0091H   A   
+ROTATIONDECRYPTNEXTCHAR . . . . .  C ADDR   0095H   A   
+ROTATIONENCRYPT . . . . . . . . .  C ADDR   007BH   A   
+ROTATIONENCRYPTNEXTCHAR . . . . .  C ADDR   007FH   A   
+SBUF. . . . . . . . . . . . . . .  D ADDR   0099H   A   
+SCON. . . . . . . . . . . . . . .  D ADDR   0098H   A   
+TAB . . . . . . . . . . . . . . .  N NUMB   0009H   A   
+TERMINATE . . . . . . . . . . . .  C ADDR   00DEH   A   
+TH1 . . . . . . . . . . . . . . .  D ADDR   008DH   A   
+TI. . . . . . . . . . . . . . . .  B ADDR   0098H.1 A   
+TMOD. . . . . . . . . . . . . . .  D ADDR   0089H   A   
+TR1 . . . . . . . . . . . . . . .  B ADDR   0088H.6 A   
+TXTLENGTH . . . . . . . . . . . .  N NUMB   0021H   A   
+TXTRAMADDRESS . . . . . . . . . .  N NUMB   0030H   A   
+WAITFORENTERKEY . . . . . . . . .  C ADDR   00B4H   A   
+WAITFORTXTCHAR. . . . . . . . . .  C ADDR   0070H   A   
+WRITEBUFFEREDTEXT . . . . . . . .  C ADDR   00A7H   A   
+WRITECHAR . . . . . . . . . . . .  C ADDR   00C2H   A   
+WRITESTRING . . . . . . . . . . .  C ADDR   00CAH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,82 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        03/03/2016  17:21:24  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\PROGRAM FILES (X86)\KEIL\C51\BIN\BL51.EXE lab5.obj TO lab5 RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  lab5.obj (LAB5)
+
+
+LINK MAP OF MODULE:  lab5 (LAB5)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0068H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  lab5 (LAB5)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        LAB5
+  C:005DH         SYMBOL        AGAIN
+  C:0043H         SYMBOL        CHECKINPUT
+  C:005DH         SYMBOL        DELAY
+  C:005CH         SYMBOL        GOBACK
+  C:0061H         SYMBOL        INNER
+  C:0030H         SYMBOL        MAIN
+  C:0033H         SYMBOL        MAINLOOP
+  C:004CH         SYMBOL        NOT0
+  C:0053H         SYMBOL        NOT1
+  C:005AH         SYMBOL        NOT2
+  C:005FH         SYMBOL        OUTER
+  D:0080H         SYMBOL        P0
+  D:0090H         SYMBOL        P1
+  C:0000H         LINE#         1
+  C:0030H         LINE#         6
+  C:0033H         LINE#         10
+  C:0035H         LINE#         11
+  C:0037H         LINE#         12
+  C:003AH         LINE#         13
+  C:003CH         LINE#         14
+  C:003EH         LINE#         15
+  C:0041H         LINE#         16
+  C:0043H         LINE#         20
+  C:0045H         LINE#         21
+  C:0048H         LINE#         22
+  C:004AH         LINE#         23
+  C:004CH         LINE#         25
+  C:004FH         LINE#         26
+  C:0051H         LINE#         27
+  C:0053H         LINE#         29
+BL51 BANKED LINKER/LOCATER V6.22                                                      03/03/2016  17:21:24  PAGE 2
+
+
+  C:0056H         LINE#         30
+  C:0058H         LINE#         31
+  C:005AH         LINE#         33
+  C:005CH         LINE#         35
+  C:005DH         LINE#         39
+  C:005FH         LINE#         40
+  C:0061H         LINE#         42
+  C:0063H         LINE#         43
+  C:0065H         LINE#         44
+  C:0067H         LINE#         45
+  -------         ENDMOD        LAB5
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 003AH BYTE ( 2%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=104
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

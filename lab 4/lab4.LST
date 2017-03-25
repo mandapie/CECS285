@@ -1,0 +1,142 @@
+A51 MACRO ASSEMBLER  LAB4                                                                 02/09/2016 19:06:15 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN lab4.OBJ
+ASSEMBLER INVOKED BY: C:\Program Files (x86)\Keil\C51\BIN\A51.EXE lab4.a51 SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Activity 3:
+  0030                 2     num1 EQU 0x30 ;address of num1 = 0x30
+  0031                 3     num2 EQU 0x31 ;address of num2 = 0x31
+  0032                 4     num3 EQU 0x32 ;address of num3 = 0x32
+  0040                 5     choice EQU 0x40 ; address of choice = 0x40
+                       6     
+0000 753010            7     mov num1, #0x10 ;set num1 = 0x10
+0003 753120            8     mov num2, #0x20 ;set num2 = 0x20
+0006 754007            9     mov choice, #7 ;set choice = 1
+0009 A840             10     mov R0, choice ; set R0 = choice = 1
+000B B80108           11     cjne R0, #1, CHOICE2 ;jump to CHOICE2 if R0 is not 1
+000E E530             12     mov A, num1 ;set A = num1 = 0x010
+0010 2531             13     add A, num2 ;A = num1 + num2 = 0x10 + 0x20
+0012 F532             14     mov num3, A ;set num3 = A
+0014 801B             15     jmp CheckDone ;jump to checkdone
+                      16     
+0016                  17     CHOICE2:
+0016 B80208           18     cjne R0, #2, CHOICE3 ;jump to CHOICE3 if R0 is not 2
+0019 E530             19     mov A, num1 ;set A = num1
+001B 9531             20     subb A, num2 ;A = num1 - num2
+001D F532             21     mov num3, A ;set num3 = A
+001F 8010             22     jmp CheckDone ;jump to checkdone
+0021                  23     CHOICE3:
+0021 B80308           24     cjne R0, #3, OTHERS ;jump to OTHERS if R0 is not 3
+0024 E531             25     mov A, num2 ;set A = num2
+0026 9530             26     subb A, num1 ;A = num2 - num1 = 0x10 - 0x20
+0028 F532             27     mov num3, A ;set num3 = A
+002A 8005             28     jmp CheckDone ;jump to checkdone
+002C                  29     OTHERS:
+002C 7532AA           30     mov num3, #0xAA ;set num3 = 0xAA
+002F 8000             31     jmp CheckDone ;jump to checkdone
+0031                  32     CheckDone:
+                      33     end
+                             
+                             ;Activity 2:
+                             num1 EQU 0x30 ;address of num1 = 0x30
+*** WARNING #A73 IN 36 (lab4.a51, LINE 36): TEXT FOUND BEYOND END STATEMENT - IGNORED
+                             num2 EQU 0x31 ;address of num2 = 0x31
+                             num3 EQU 0x32 ;address of num3 = 0x32
+                             
+                             mov num1, #21
+                             mov num2, #21
+                             ;use A to compare num1 and num2
+                             mov A, num1 ;A = num1
+                             clr CY ;make sure A starts with a positive value
+                             subb A, num2 ;A - num2
+                             
+                             jz EQUAL ;if num1 == num2 jump tp EQUAL
+                             jc LESS ;if A == negative number, jump to less
+                             jnc MORE ;if A == positive number, jump to less
+                             
+                             EQUAL:
+                             mov num3, #0x22 ;num3 = 0x22
+                             jmp CheckDone
+                             LESS:
+                             mov num3, #0x11 ;num3 = 0x11
+                             jmp CheckDone
+                             MORE:
+A51 MACRO ASSEMBLER  LAB4                                                                 02/09/2016 19:06:15 PAGE     2
+
+                             mov num3, #0x33 ;num3 = 0x33
+                             CheckDone:
+                             end
+                             
+                             
+                             ;Activity 1:
+                             ;default bank 0
+                             mov A, #0xAA ;set A = 0xAA
+                             ;move R0 - R7  = A = 0xAA in bank 0
+                             mov R0, A
+                             mov R1, A
+                             mov R2, A
+                             mov R3, A
+                             mov R4, A
+                             mov R5, A
+                             mov R6, A
+                             mov R7, A
+                             
+                             setb RS0 ;set to bank 1
+                             ;move R0 - R7  = A = 0xAA in bank 1
+                             mov R0, A
+                             mov R1, A
+                             mov R2, A
+                             mov R3, A
+                             mov R4, A
+                             mov R5, A
+                             mov R6, A
+                             mov R7, A
+                             
+                             setb RS1 ;set to bank 3
+                             ;move R0 - R7  = A = 0xAA in bank 3
+                             mov R0, A
+                             mov R1, A
+                             mov R2, A
+                             mov R3, A
+                             mov R4, A
+                             mov R5, A
+                             mov R6, A
+                             mov R7, A
+                             
+                             clr RS0 ;set to bank 2
+                             ;move R0 - R7  = A = 0xAA in bank 2
+                             mov R0, A
+                             mov R1, A
+                             mov R2, A
+                             mov R3, A
+                             mov R4, A
+                             mov R5, A
+                             mov R6, A
+                             mov R7, A
+                             end
+A51 MACRO ASSEMBLER  LAB4                                                                 02/09/2016 19:06:15 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+CHECKDONE. . . . .  C ADDR   0031H   A   
+CHOICE . . . . . .  N NUMB   0040H   A   
+CHOICE2. . . . . .  C ADDR   0016H   A   
+CHOICE3. . . . . .  C ADDR   0021H   A   
+NUM1 . . . . . . .  N NUMB   0030H   A   
+NUM2 . . . . . . .  N NUMB   0031H   A   
+NUM3 . . . . . . .  N NUMB   0032H   A   
+OTHERS . . . . . .  C ADDR   002CH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  1 WARNING(S), 0 ERROR(S)

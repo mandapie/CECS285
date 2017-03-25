@@ -1,0 +1,87 @@
+A51 MACRO ASSEMBLER  LAB6                                                                 03/10/2016 17:43:45 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN lab6.OBJ
+ASSEMBLER INVOKED BY: C:\Program Files (x86)\Keil\C51\BIN\A51.EXE lab6.a51 SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000 802E              1     jmp main ;jump past interrupt vector
+                       2                     
+0030                   3     org 0x30 ;start at RAM location 0x30
+                       4                     ;--+ configuration section +--
+0030                   5     main:
+0030 759000            6                     mov p1, #0x00 ;set p1 as output
+0033 758910            7                     mov TMOD, #0x10 ;set Timer1 to mode 1
+                       8                     ;--+ main program section +--
+0036                   9     mainLoop:
+0036 1146             10                     call checkInput
+0038 1160             11                     call Delay
+003A 7590FF           12                     mov p1, #0xFF ;LEDs on
+003D 1146             13                     call checkInput
+003F 1160             14                     call Delay
+0041 759000           15                     mov p1, #0x00 ;LEDs off
+0044 80F0             16                     jmp mainLoop
+                      17     
+                      18                     ;--+ checkInput subroutine +--
+0046                  19     checkInput:
+0046 AF80             20                     mov r7, p0 ;read switch positions into r7
+0048 BFFC04           21                     cjne r7, #0xFC, not0 ;if switch value is not FC jump to the label not0
+004B 7D05             22                     mov r5, #5 ;r5 has the value of #10
+004D 8010             23                     jmp goback
+004F                  24     not0:
+004F BFFD04           25                     cjne r7, #0xFD, not1 ;if switch value is not FD jump to the label not1
+0052 7D0A             26                     mov r5, #10 ;r5 has the value of #20
+0054 8009             27                     jmp goback
+0056                  28     not1:
+0056 BFFE04           29                     cjne r7, #0xFE, not2 ;if switch value is not FE jump to the label not2
+0059 7D14             30                     mov r5, #20 ;r5 has the value of #40
+005B 8002             31                     jmp goback
+005D                  32     not2:
+005D 7D28             33                     mov r5, #40 ;r5 has the value of #90
+005F                  34     goback:
+005F 22               35                     ret ;return from subroutine
+                      36     
+                      37                     ;--+ Delay subroutine+--
+0060                  38     Delay:
+0060 758D3C           39                     mov TH1, #0x3C ;set high byte = 3C
+0063 758BAF           40                     mov TL1, #0xAF ;set low byte =  AF
+0066 D28E             41                     setb TR1
+0068                  42     Wait:
+0068 308FFD           43                     jnb TF1, Wait
+006B C28E             44                     clr TR1 ;stop timer
+006D C28F             45                     clr TF1 ;clear timer flag
+006F DDEF             46                     djnz r5, Delay
+0071 22               47                     ret ;return from subroutine
+                      48     end
+A51 MACRO ASSEMBLER  LAB6                                                                 03/10/2016 17:43:45 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+CHECKINPUT . . . .  C ADDR   0046H   A   
+DELAY. . . . . . .  C ADDR   0060H   A   
+GOBACK . . . . . .  C ADDR   005FH   A   
+MAIN . . . . . . .  C ADDR   0030H   A   
+MAINLOOP . . . . .  C ADDR   0036H   A   
+NOT0 . . . . . . .  C ADDR   004FH   A   
+NOT1 . . . . . . .  C ADDR   0056H   A   
+NOT2 . . . . . . .  C ADDR   005DH   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+TF1. . . . . . . .  B ADDR   0088H.7 A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TL1. . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+WAIT . . . . . . .  C ADDR   0068H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

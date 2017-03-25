@@ -1,0 +1,171 @@
+A51 MACRO ASSEMBLER  LAB_10                                                               04/26/2016 16:31:30 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN lab 10.OBJ
+ASSEMBLER INVOKED BY: C:\Program Files (x86)\Keil\C51\BIN\A51.EXE lab 10.a51 SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;---------------- Lab 10 Multi-Byte Key based symmetric XOR encryption ---------------
+                       2     ;variable and constant definitions
+  0040                 3     keyBytesRAMaddress EQU 0x40     ;symbolic constant for base address of encryption key in RA
+                             M
+  0030                 4     keyLength EQU 0x30                                      ;variable to track length of key
+  00E0                 5     keyvalIndex EQU 0xe0                                    ;variable to index the keyval const
+                             ant array
+                       6                                                                                                
+                                  ;keyvalIndex is also an alias for accumulator
+                       7     ;begin section from lab 9
+                       8     ;vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+0000 802E              9     jmp main                                                                        ;jump past 
+                             interrupt vector table
+0030                  10     org 0x0030 ;put main program at rom location 0x0030
+0030                  11     main:
+                      12             ;---------------- Initialization/configuration ----------------;
+                      13                     ;keyval variable no longer used
+                      14                     ;mov keyval, #0x23                                      ;load the keyval va
+                             riable with encryption key
+0030 758920           15                     mov tmod, #0x20                                 ;config timer 1 mode 2
+0033 759850           16                     mov scon, #0x50                                 ;config serial 8-data, 1 st
+                             art, 1 stop, no parity
+0036 758DFD           17                     mov th1, #0xFD                                          ;9600 baud
+0039 D28E             18                     setb tr1                                                                   
+                                  ;start timer 1 to enable serial communication
+                      19     ;end section from lab 9
+                      20     ;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      21                     ;In the following section load the key bytes from ROM into RAM
+003B 7840             22                     mov r0, #keyBytesRAMaddress     ;initialize RAM pointer
+003D 900209           23                     mov dptr, #keyvals2                             ;initialize ROM pointer
+0040 75E000           24                     mov keyvalIndex, #0x00                  ;initialize keyvalIndex
+0043                  25             LoadKey:
+0043 C0E0             26                     push keyvalIndex                                                ;preserve k
+                             eyvalIndex variable
+0045 93               27                     movc a, @a+dptr                                         ;load byte of key f
+                             rom ROM
+0046 B40002           28                     cjne a, #0x00, notNull                          ;check for null terminating
+                              character
+0049 8008             29                     jmp LoadDone                                            ;if null is found, 
+                             enter main_loop
+004B                  30                     notNull:
+004B F6               31                             mov @r0, a                                                      ;pu
+                             t byte of key into ram
+004C D0E0             32                             pop keyvalIndex                                 ;restore keyvalInde
+                             x variable
+004E 05E0             33                             inc keyvalIndex                                 ;increment keyvalIn
+                             dex
+0050 08               34                             inc r0                                                          ;in
+                             crement RAM pointer
+0051 80F0             35                             jmp LoadKey                                             ;continue t
+                             he loop
+0053                  36             LoadDone:
+0053 7600             37                     mov @r0, #0x00                                          ;append null char t
+                             o string
+0055 7840             38                     mov r0, #keyBytesRAMaddress     ;re-initialize RAM pointer
+                      39             ;---------------- END of Initialization/configuration ----------------;
+                      40     ;begin section from lab 9
+                      41     ;vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+A51 MACRO ASSEMBLER  LAB_10                                                               04/26/2016 16:31:30 PAGE     2
+
+0057                  42     mainloop:
+0057 3098FD           43                     jnb ri, $                                                                  
+                                  ;wait to receive a char
+005A 1172             44                     call getchar                                                    ;char recei
+                             ved, get it!
+                      45                     ;cjne a, #0x00, encrypt                 ;check for null character in string
+005C B40002           46                     cjne a, #0x00, checkKeyVal              ;check for null character in string
+005F 800B             47                     jmp terminate                                           ;terminate program 
+                             if null character is recieved
+                      48     ;end section from lab 9
+                      49     ;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0061                  50             checkKeyVal:
+0061 B60002           51                     cjne @r0, #0x00, Encrypt                        ;go to Encrypt if keyVal is
+                              not null
+0064 7840             52                     mov r0, #keyBytesRAMaddress     ;re-initialize RAM pointer
+                      53     ;begin section from lab 9
+                      54     ;vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+0066                  55     Encrypt:
+0066 66               56                     xrl a, @r0                                                              ;en
+                             crypt the character contained in the accumulator
+0067 1177             57                     call writechar                                                  ;write the 
+                             encrypted character
+0069 08               58                     inc r0
+006A 80EB             59                     jmp mainloop
+006C                  60     terminate:
+006C 7400             61                     mov a, #0x00                                                    ;load null 
+                             character into accumulator
+006E 1177             62                     call writechar                                                  ;append the
+                              null character to text output
+0070 80FE             63                     sjmp $                                                                  ;ha
+                             lt
+                      64     ;----------- getchar ----------;
+                      65     ;subroutine receives nothing before it is called
+                      66     ;writes the character to the serial console
+                      67     ;returns a byte in the accumulator
+0072                  68     getchar:
+0072 E599             69                     mov a, sbuf                                                     ;get serial
+                              data (char)
+0074 C298             70                     clr ri                                                                     
+                                  ;acknowledge data received
+0076 22               71                     ret                                                                        
+                                  ;return from subroutine call
+                      72     ;----------- writechar ----------;
+                      73     ;receives byte or character
+                      74     ;reads a character that has been received serially
+                      75     ;returns the c
+0077                  76     writechar:
+0077 F599             77                     mov sbuf, a                                                     ;send data 
+                             (char) serially
+0079 3099FD           78                     jnb ti, $                                                                  
+                                  ;wait until data is sent
+007C C299             79                     clr ti                                                                     
+                                  ;acknowledge data has been sent
+007E 22               80                     ret                                                                        
+                                  ;return from subroutine call
+                      81     ;end section from lab 9
+                      82     ;^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                      83     ;multibyte keys are defined below, only one will be used at a time
+0200                  84     org 0x200
+0200 31323334         85     keyvals: db '12345678',0
+0204 35363738                
+0208 00                      
+0209 23344556         86     keyvals2: db 0x23, 0x34, 0x45, 0x56, 0x67, 0x78,0x89,0x90, 0x00
+020D 67788990                
+0211 00                      
+                      87     end
+A51 MACRO ASSEMBLER  LAB_10                                                               04/26/2016 16:31:30 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+CHECKKEYVAL. . . .  C ADDR   0061H   A   
+ENCRYPT. . . . . .  C ADDR   0066H   A   
+GETCHAR. . . . . .  C ADDR   0072H   A   
+KEYBYTESRAMADDRESS  N NUMB   0040H   A   
+KEYLENGTH. . . . .  N NUMB   0030H   A   
+KEYVALINDEX. . . .  N NUMB   00E0H   A   
+KEYVALS. . . . . .  C ADDR   0200H   A   
+KEYVALS2 . . . . .  C ADDR   0209H   A   
+LOADDONE . . . . .  C ADDR   0053H   A   
+LOADKEY. . . . . .  C ADDR   0043H   A   
+MAIN . . . . . . .  C ADDR   0030H   A   
+MAINLOOP . . . . .  C ADDR   0057H   A   
+NOTNULL. . . . . .  C ADDR   004BH   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+TERMINATE. . . . .  C ADDR   006CH   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+WRITECHAR. . . . .  C ADDR   0077H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

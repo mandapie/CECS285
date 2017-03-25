@@ -1,0 +1,112 @@
+A51 MACRO ASSEMBLER  LAB_7                                                                03/15/2016 18:24:31 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN lab 7.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE lab 7.a51 SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000 802E              1     jmp main
+                       2     
+000B                   3     org 0x000B
+000B 8059              4     jmp ISR_T0
+001B                   5     org 0x001B
+001B 8031              6     jmp ISR_T1
+                       7     
+  0000                 8     directionFlag bit 0x00 ;(1):for increasing duty cycle, (0) for decreasing
+  0001                 9     DutyFlag bit 0x01 ;(1):positive portion of duty cycle, (0):negative
+  REG                 10     DutyCycleByte equ r0 ;duty cycle time byte valuefor timer 0
+                      11     
+0030                  12     org 0x30
+0030                  13     main:
+0030 758911           14             mov TMOD, #0x11 ;config Timer0 mode1 and Timer1 mode1
+0033 759000           15             mov p1, #0x00 ;configure p1 as output
+0036 D2A9             16             setb ET0 ;enable Timer0 interrupt
+0038 D2AB             17             setb ET1 ;enable Timer1 interrupt
+003A D2AF             18             setb EA ;enable global interrupt
+                      19             ;load timer registers with 0x0000
+003C 85008C           20             mov TH0, 0x00
+003F 85008A           21             mov TL0, 0x00
+0042 85008D           22             mov TH1, 0x00
+0045 85008B           23             mov TL1, 0x00
+0048 D28C             24             setb TR0 ;start Timer0
+004A D28E             25             setb TR1 ;start Timer1
+                      26             
+004C                  27     mainloop:
+004C 80FE             28             sjmp $
+                      29     
+004E                  30     ISR_T1:
+004E 758DC0           31             mov TH1, #0xC0
+0051 200009           32             jb directionFlag, increase
+                      33             ;decreasing section
+0054 B86004           34             cjne DutyCycleByte, #0x60, not0x60
+0057 B200             35             cpl directionFlag ;directionFlag = ~directionFlag
+0059 08               36             inc DutyCycleByte ;DutyCycleByte++
+005A 32               37             reti ;return from interrupt service route
+005B                  38             not0x60:
+005B 18               39                     dec DutyCycleByte
+005C 32               40                     reti ;return from interrupt service route
+005D                  41             increase:
+005D B8FF04           42                     cjne DutyCycleByte, #0xFF, not0xFF
+0060 B200             43                     cpl directionFlag ;directionFlag = ~directionFlag
+0062 18               44                     dec DutyCycleByte ;DutyCycleByte--
+0063 32               45                     reti ;return from interrupt service route
+0064                  46             not0xFF:
+0064 08               47                     inc DutyCycleByte ;DutyCycleByte++
+0065 32               48                     reti ;return from interrupt service route
+                      49             
+0066                  50     ISR_T0:
+0066 758CFF           51             mov TH0, #0xFF
+0069 B201             52             cpl DutyFlag ;DutyFlag = ~DutyFlag
+006B 300106           53             jnb DutyFlag, off
+006E 888A             54             mov TL0, DutyCycleByte
+0070 7590FF           55             mov p1, #0xFF ;turn on led
+0073 32               56             reti ;return from interrupt service route
+0074                  57             off:
+0074 74FF             58                     mov a,#0xFF
+A51 MACRO ASSEMBLER  LAB_7                                                                03/15/2016 18:24:31 PAGE     2
+
+0076 C2D7             59                     clr cy
+0078 98               60                     subb a, DutyCycleByte
+0079 F58A             61                     mov TL0, a ;TL0 =- DutyCycleByte
+007B 759000           62                     mov p1, #0x00 ;turn off led
+007E 32               63                     reti ;return from interrupt service route
+                      64     end
+A51 MACRO ASSEMBLER  LAB_7                                                                03/15/2016 18:24:31 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+CY . . . . . . . .  B ADDR   00D0H.7 A   
+DIRECTIONFLAG. . .  B ADDR   0020H.0 A   
+DUTYCYCLEBYTE. . .    REG    R0          
+DUTYFLAG . . . . .  B ADDR   0020H.1 A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+ET0. . . . . . . .  B ADDR   00A8H.1 A   
+ET1. . . . . . . .  B ADDR   00A8H.3 A   
+INCREASE . . . . .  C ADDR   005DH   A   
+ISR_T0 . . . . . .  C ADDR   0066H   A   
+ISR_T1 . . . . . .  C ADDR   004EH   A   
+MAIN . . . . . . .  C ADDR   0030H   A   
+MAINLOOP . . . . .  C ADDR   004CH   A   
+NOT0X60. . . . . .  C ADDR   005BH   A   
+NOT0XFF. . . . . .  C ADDR   0064H   A   
+OFF. . . . . . . .  C ADDR   0074H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TL1. . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

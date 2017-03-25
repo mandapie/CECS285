@@ -1,0 +1,82 @@
+A51 MACRO ASSEMBLER  LAB5                                                                 03/03/2016 17:21:24 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN lab5.OBJ
+ASSEMBLER INVOKED BY: C:\Program Files (x86)\Keil\C51\BIN\A51.EXE lab5.a51 SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000 802E              1                     jmp main ;jump past interrupt vector
+                       2                     
+0030                   3     org 0x30
+                       4                     ;--+ configuration section +--
+0030                   5     main:
+0030 759000            6                     mov p1, #0x00 ;set p1 as output
+                       7                     
+                       8                     ;--+ main program section +--
+0033                   9     mainLoop:
+0033 1143             10                     call checkInput
+0035 115D             11                     call Delay
+0037 7590FF           12                     mov p1, #0xFF ;LEDs on
+003A 1143             13                     call checkInput
+003C 115D             14                     call Delay
+003E 759000           15                     mov p1, #0x00 ;LEDs off
+0041 80F0             16                     jmp mainLoop
+                      17     
+                      18                     ;--+ checkInput subroutine +--
+0043                  19     checkInput:
+0043 AF80             20                     mov r7, p0 ;read switch positions into r7
+0045 BFFC04           21                     cjne r7, #0xFC, not0
+0048 7D0A             22                     mov r5, #10
+004A 8010             23                     jmp goback
+004C                  24     not0:
+004C BFFD04           25                     cjne r7, #0xFD, not1
+004F 7D14             26                     mov r5, #20
+0051 8009             27                     jmp goback
+0053                  28     not1:
+0053 BFFE04           29                     cjne r7, #0xFE, not2
+0056 7D28             30                     mov r5, #40
+0058 8002             31                     jmp goback
+005A                  32     not2:
+005A 7D5A             33                     mov r5, #90
+005C                  34     goback:
+005C 22               35                     ret ;return from subroutine
+                      36     
+                      37                     ;--+ Delay subroutine+--
+005D                  38     Delay:
+005D 78FA             39                     again: mov r0, #250
+005F 79FA             40                     outer: mov r1, #250
+0061                  41                     inner:
+0061 D9FE             42                                     djnz r1, inner
+0063 D8FA             43                                     djnz r0, outer
+0065 DDF6             44                                     djnz r5, again
+0067 22               45                                     ret ;return from subroutine
+                      46     end
+A51 MACRO ASSEMBLER  LAB5                                                                 03/03/2016 17:21:24 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AGAIN. . . . . . .  C ADDR   005DH   A   
+CHECKINPUT . . . .  C ADDR   0043H   A   
+DELAY. . . . . . .  C ADDR   005DH   A   
+GOBACK . . . . . .  C ADDR   005CH   A   
+INNER. . . . . . .  C ADDR   0061H   A   
+MAIN . . . . . . .  C ADDR   0030H   A   
+MAINLOOP . . . . .  C ADDR   0033H   A   
+NOT0 . . . . . . .  C ADDR   004CH   A   
+NOT1 . . . . . . .  C ADDR   0053H   A   
+NOT2 . . . . . . .  C ADDR   005AH   A   
+OUTER. . . . . . .  C ADDR   005FH   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

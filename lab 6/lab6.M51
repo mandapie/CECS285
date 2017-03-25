@@ -1,0 +1,88 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        03/10/2016  17:43:45  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\PROGRAM FILES (X86)\KEIL\C51\BIN\BL51.EXE lab6.obj TO lab6 RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  lab6.obj (LAB6)
+
+
+LINK MAP OF MODULE:  lab6 (LAB6)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0072H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  lab6 (LAB6)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        LAB6
+  C:0046H         SYMBOL        CHECKINPUT
+  C:0060H         SYMBOL        DELAY
+  C:005FH         SYMBOL        GOBACK
+  C:0030H         SYMBOL        MAIN
+  C:0036H         SYMBOL        MAINLOOP
+  C:004FH         SYMBOL        NOT0
+  C:0056H         SYMBOL        NOT1
+  C:005DH         SYMBOL        NOT2
+  D:0080H         SYMBOL        P0
+  D:0090H         SYMBOL        P1
+  B:0088H.7       SYMBOL        TF1
+  D:008DH         SYMBOL        TH1
+  D:008BH         SYMBOL        TL1
+  D:0089H         SYMBOL        TMOD
+  B:0088H.6       SYMBOL        TR1
+  C:0068H         SYMBOL        WAIT
+  C:0000H         LINE#         1
+  C:0030H         LINE#         6
+  C:0033H         LINE#         7
+  C:0036H         LINE#         10
+  C:0038H         LINE#         11
+  C:003AH         LINE#         12
+  C:003DH         LINE#         13
+  C:003FH         LINE#         14
+  C:0041H         LINE#         15
+  C:0044H         LINE#         16
+  C:0046H         LINE#         20
+  C:0048H         LINE#         21
+  C:004BH         LINE#         22
+  C:004DH         LINE#         23
+BL51 BANKED LINKER/LOCATER V6.22                                                      03/10/2016  17:43:45  PAGE 2
+
+
+  C:004FH         LINE#         25
+  C:0052H         LINE#         26
+  C:0054H         LINE#         27
+  C:0056H         LINE#         29
+  C:0059H         LINE#         30
+  C:005BH         LINE#         31
+  C:005DH         LINE#         33
+  C:005FH         LINE#         35
+  C:0060H         LINE#         39
+  C:0063H         LINE#         40
+  C:0066H         LINE#         41
+  C:0068H         LINE#         43
+  C:006BH         LINE#         44
+  C:006DH         LINE#         45
+  C:006FH         LINE#         46
+  C:0071H         LINE#         47
+  -------         ENDMOD        LAB6
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0044H BYTE ( 3%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=114
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,51 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        01/28/2016  18:10:43  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE lab3.obj TO lab3 RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  lab3.obj (LAB3)
+
+
+LINK MAP OF MODULE:  lab3 (LAB3)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0014H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  lab3 (LAB3)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        LAB3
+  N:0030H         SYMBOL        W
+  N:0031H         SYMBOL        X
+  N:0032H         SYMBOL        Y
+  N:0033H         SYMBOL        Z
+  C:0000H         LINE#         10
+  C:0003H         LINE#         11
+  C:0006H         LINE#         12
+  C:0009H         LINE#         13
+  C:000CH         LINE#         14
+  C:000EH         LINE#         15
+  C:0010H         LINE#         16
+  C:0012H         LINE#         17
+  -------         ENDMOD        LAB3
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0014H BYTE ( 0%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=20
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

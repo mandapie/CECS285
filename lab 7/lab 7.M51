@@ -1,0 +1,105 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        03/15/2016  18:24:31  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE lab 7.obj TO lab 7 RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  lab 7.obj (LAB_7)
+
+
+LINK MAP OF MODULE:  lab 7 (LAB_7)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     007FH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  lab 7 (LAB_7)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        LAB_7
+  B:00D0H.7       SYMBOL        CY
+  B:0020H.0       SYMBOL        DIRECTIONFLAG
+  B:0020H.1       SYMBOL        DUTYFLAG
+  B:00A8H.7       SYMBOL        EA
+  B:00A8H.1       SYMBOL        ET0
+  B:00A8H.3       SYMBOL        ET1
+  C:005DH         SYMBOL        INCREASE
+  C:0066H         SYMBOL        ISR_T0
+  C:004EH         SYMBOL        ISR_T1
+  C:0030H         SYMBOL        MAIN
+  C:004CH         SYMBOL        MAINLOOP
+  C:005BH         SYMBOL        NOT0X60
+  C:0064H         SYMBOL        NOT0XFF
+  C:0074H         SYMBOL        OFF
+  D:0090H         SYMBOL        P1
+  D:008CH         SYMBOL        TH0
+  D:008DH         SYMBOL        TH1
+  D:008AH         SYMBOL        TL0
+  D:008BH         SYMBOL        TL1
+  D:0089H         SYMBOL        TMOD
+  B:0088H.4       SYMBOL        TR0
+  B:0088H.6       SYMBOL        TR1
+  C:0000H         LINE#         1
+  C:000BH         LINE#         4
+  C:001BH         LINE#         6
+  C:0030H         LINE#         14
+  C:0033H         LINE#         15
+  C:0036H         LINE#         16
+  C:0038H         LINE#         17
+  C:003AH         LINE#         18
+BL51 BANKED LINKER/LOCATER V6.22                                                      03/15/2016  18:24:31  PAGE 2
+
+
+  C:003CH         LINE#         20
+  C:003FH         LINE#         21
+  C:0042H         LINE#         22
+  C:0045H         LINE#         23
+  C:0048H         LINE#         24
+  C:004AH         LINE#         25
+  C:004CH         LINE#         28
+  C:004EH         LINE#         31
+  C:0051H         LINE#         32
+  C:0054H         LINE#         34
+  C:0057H         LINE#         35
+  C:0059H         LINE#         36
+  C:005AH         LINE#         37
+  C:005BH         LINE#         39
+  C:005CH         LINE#         40
+  C:005DH         LINE#         42
+  C:0060H         LINE#         43
+  C:0062H         LINE#         44
+  C:0063H         LINE#         45
+  C:0064H         LINE#         47
+  C:0065H         LINE#         48
+  C:0066H         LINE#         51
+  C:0069H         LINE#         52
+  C:006BH         LINE#         53
+  C:006EH         LINE#         54
+  C:0070H         LINE#         55
+  C:0073H         LINE#         56
+  C:0074H         LINE#         58
+  C:0076H         LINE#         59
+  C:0078H         LINE#         60
+  C:0079H         LINE#         61
+  C:007BH         LINE#         62
+  C:007EH         LINE#         63
+  -------         ENDMOD        LAB_7
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0055H BYTE ( 4%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=127
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

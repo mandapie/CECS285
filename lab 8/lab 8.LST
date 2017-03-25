@@ -1,0 +1,152 @@
+A51 MACRO ASSEMBLER  LAB_8                                                                04/05/2016 18:05:37 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN lab 8.OBJ
+ASSEMBLER INVOKED BY: C:\Program Files (x86)\Keil\C51\BIN\A51.EXE lab 8.a51 SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000 802E              1     JMP Main
+  00E0                 2     charIndex EQU 0xE0 ;alias variable for Accumulator 
+  0030                 3     DutyByte EQU 0x30
+  0000                 4     DutyFlag BIT 0x00
+000B                   5     ORG 0x0B
+000B 804A              6     JMP T0_ISR
+                       7     
+0030                   8     ORG 0x30
+0030                   9     Main:   
+0030 759000           10             MOV P1, #0x00 ;Configure port P1 as output
+0033 758921           11             MOV TMOD, #0x21 ;set Timer 1 mode 2 and Timer 0 mode 1
+0036 758DFD           12             MOV TH1, #0xFD  ;set Timer 1 to operate on 9600 baud
+0039 759850           13             MOV SCON, #0x50 ;configure Serial communication
+003C D28E             14             SETB TR1        ;Start Timer 1
+003E 900200           15             MOV DPTR, #Welcome
+0041 1170             16             CALL WriteString
+0043 900237           17             MOV DPTR, #DutyValues
+0046 758CFF           18             MOV TH0, #0xFF
+0049 758A60           19             MOV TL0, #0x60
+004C D2A9             20             SETB ET0
+004E D2AF             21             SETB EA
+0050 D28C             22             SETB TR0
+0052                  23     Main_Loop:
+0052 20983D           24             JB RI, not0RI
+                      25             ;RI is equal to 0
+0055 80FB             26             jmp Main_Loop
+0057                  27     T0_ISR:
+0057 758CFF           28             mov TH0, #0xFF  ;load timer high 0 with the value 0xff
+005A B200             29             cpl DutyFlag    ;complement duty flag
+005C 200024           30             jb DutyFlag, T_ON       ;check to see if dutyflag is set to on or off
+                      31             ;T_OFF Delay Cycle 
+005F 74FF             32             mov a, #0xFF    ;move into a the value 0xff
+0061 C2D7             33             clr cy  ;clear the carry flag
+0063 9530             34             subb a, DutyByte        ;complements DutyCycleByte
+0065 F58A             35             mov TL0, a      ;move into the timer low 0 the value in a
+0067 759000           36             mov p1, #0x00   ;turn off all led lights
+006A 32               37             reti    ;return from interrupt service routine
+006B                  38     GetChar:
+006B E599             39             MOV a, SBUF
+006D C298             40             CLR RI
+006F 22               41             RET
+0070                  42     WriteString:
+0070 75E000           43             MOV charIndex, #0x00
+0073                  44             again:
+0073 C0E0             45                     PUSH charIndex
+0075 93               46                     MOVC a, @a + DPTR
+0076 7012             47                     JNZ not0
+                      48                     ;a is equal to 0
+0078 D0E0             49                     POP charIndex
+007A 22               50                     RET
+007B                  51     WriteChar:
+007B F599             52             MOV SBUF, a
+007D 3099FD           53             JNB TI, $
+0080 C299             54             CLR TI
+0082 22               55             RET
+0083                  56     T_ON:
+0083 85308A           57             mov TL0, DutyByte       ;mov the hex value #0xFF to DutyCycleByte
+0086 7590FF           58             mov p1, #0xFF   ;turn on all the led lights
+A51 MACRO ASSEMBLER  LAB_8                                                                04/05/2016 18:05:37 PAGE     2
+
+0089 32               59             reti    ;return from interrupt
+008A                  60     not0:
+008A 117B             61             CALL WriteChar
+008C D0E0             62             POP charIndex
+008E 05E0             63             INC charIndex
+0090 80E1             64             JMP again
+0092                  65     not0RI:
+0092 116B             66             CALL GetChar
+0094 540F             67             ANL a, #0x0F
+0096 F5F0             68             MOV b, a
+0098 7409             69             MOV a, #9
+009A C2D7             70             CLR CY
+009C 95F0             71             SUBB a, b
+009E 40B2             72             JC Main_Loop
+                      73             ;CY is not equal to 1
+00A0 E5F0             74             MOV a, b
+00A2 93               75             MOVC a, @a + DPTR
+00A3 F530             76             MOV DutyByte, a 
+00A5 80AB             77             jmp Main_Loop
+                      78             
+0200                  79     ORG 0x200
+0200 456E7465         80     Welcome: DB "Enter a value 0 through 9 for LED brightness control: ",0 
+0204 72206120                
+0208 76616C75                
+020C 65203020                
+0210 7468726F                
+0214 75676820                
+0218 3920666F                
+021C 72204C45                
+0220 44206272                
+0224 69676874                
+0228 6E657373                
+022C 20636F6E                
+0230 74726F6C                
+0234 3A2000                  
+0237 60708090         81     DutyValues: DB 0x60, 0x70, 0x80, 0x90, 0xA0, 0xB0, 0xC0, 0xD0, 0xE0, 0xF0
+023B A0B0C0D0                
+023F E0F0                    
+                      82     END
+A51 MACRO ASSEMBLER  LAB_8                                                                04/05/2016 18:05:37 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AGAIN. . . . . . .  C ADDR   0073H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+CHARINDEX. . . . .  N NUMB   00E0H   A   
+CY . . . . . . . .  B ADDR   00D0H.7 A   
+DUTYBYTE . . . . .  N NUMB   0030H   A   
+DUTYFLAG . . . . .  B ADDR   0020H.0 A   
+DUTYVALUES . . . .  C ADDR   0237H   A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+ET0. . . . . . . .  B ADDR   00A8H.1 A   
+GETCHAR. . . . . .  C ADDR   006BH   A   
+MAIN . . . . . . .  C ADDR   0030H   A   
+MAIN_LOOP. . . . .  C ADDR   0052H   A   
+NOT0 . . . . . . .  C ADDR   008AH   A   
+NOT0RI . . . . . .  C ADDR   0092H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+T0_ISR . . . . . .  C ADDR   0057H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+T_ON . . . . . . .  C ADDR   0083H   A   
+WELCOME. . . . . .  C ADDR   0200H   A   
+WRITECHAR. . . . .  C ADDR   007BH   A   
+WRITESTRING. . . .  C ADDR   0070H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
